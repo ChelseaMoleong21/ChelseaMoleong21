@@ -1,0 +1,94 @@
+from collections import deque
+
+# antrian dibagi menjadi dua: darurat dan umum
+antrian_darurat = deque()
+antrian_umum = deque()
+
+# data pasien dan poli/dokter 
+data_pasien = {}
+data_dokter = {}
+
+# Data Pasien ke antrian
+def tambah_pasien(nama, prioritas, poli):
+    if prioritas == "darurat":
+        antrian_darurat.append ((nama,poli))
+    else:
+        antrian_umum.append((nama, poli))
+    data_pasien[nama] = {"status": "menunggu", "poli": poli}
+    print(f"pasien '{nama}' ditambahakan ke antrian {prioritas} untuk poli'{poli}'.") 
+
+# Memproses Pasien Berikutnya
+def proses_pasien():
+    if antrian_darurat:
+        nama,poli = antrian_darurat.popleft()
+    elif antrian_umum:
+        nama,poli = antrian_umum.popleft()
+    else:
+        print("tidak ada pasien dalama antrian.")
+        return
+
+    print(f"Pasien '{nama}' untuk poli '{poli}' sedang di proses.") 
+    data_pasien[nama]["status"] = "diproses"
+
+# Perkiraan Waktu tunggu
+def perkiraan_waktu_tunggu(durasi_per_pasien):
+    total_pasien = len(antrian_darurat) + len(antrian_umum)
+    waktu_tunggu = total_pasien * durasi_per_pasien
+    print(f"\nPerkiraan waktu tunggu total: {waktu_tunggu} menit.")
+    print(f"antrian Darurat: {len(antrian_darurat)} pasien, umum: {len(antrian_umum)} pasien.")
+
+# Management dokter dan poli
+def tambah_dokter(nama_dokter, poli):
+    data_dokter[nama_dokter] = poli
+    print(f"dokter '{nama_dokter}' ditugaskan ke poli '{poli}'.")
+
+# Rekam status pasien
+def rekam_status_pasien(nama, status):
+    if nama in data_pasien:
+        data_pasien[nama]["status"]= status
+        print(f"status Pasien '{nama}' diperbarui menjadi '{status}'.")
+    else:
+        print(f"Pasien '{nama}' tidak ditemukan.")
+
+# MENU UTAMA
+def menu():
+    while True:
+        print("\n-----Sistem Antrian Rumah Sakit Gunung Maria-----")
+        print("1. Tambah Pasien ke Antrian")
+        print("2. Proses Pasien Berikutnya")
+        print("3. Perkiraan Waktu Tunggu")
+        print("4. Tambah/Management Dokter ")
+        print("5. Rekam Status Pasien")
+        print("6. Keluar")
+        pilihan = input("Pilih Menu (1-6): ")
+
+        if pilihan == "1":
+            nama = input("Nama Pasien: ")
+            prioritas = input("prioritas (darurat/umum): ").lower()
+            poli = input("Poli Tujuan: ")
+            tambah_pasien(nama, prioritas, poli)
+        elif pilihan == "2":
+            proses_pasien()
+        elif pilihan == "3":
+            durasi_per_pasien = int(input("Durasi Rata - rata per pasien (dalam menit): "))
+            perkiraan_waktu_tunggu(durasi_per_pasien)
+        elif pilihan == "4":
+            nama_dokter = input("Nama Dokter: ")
+            poli = input("Poli: ")
+            tambah_dokter(nama_dokter, poli)
+        elif pilihan == "5":
+            nama = input("Nama Pasien: ")
+            status = input("Status Baru: ")
+            rekam_status_pasien(nama, status)
+        elif pilihan == "6":
+            print("Keluar Dari RS. Terima kasih!!")
+            break
+        else:
+            print("Pilihan Tidak Valid, try again.")
+# selamat jalankan program 
+# saya chelsea moleong terima kasih
+menu()
+
+
+
+    
